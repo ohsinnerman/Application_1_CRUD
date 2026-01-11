@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, TextField, IconButton, Paper, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { Box, TextField, IconButton, Typography, List, ListItem, Avatar, Paper, Stack } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import { useGetMessagesQuery } from '../features/chat/messageApi';
 import { useSocket } from '../context/SocketContext';
 import { useSelector } from 'react-redux';
@@ -31,7 +34,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
 
             const handleMessage = (message: any) => {
                 if (message.chatId === chatId) {
-                    refetch(); // Simplest strategy: refetch. Better: update cache.
+                    refetch();
                 }
             };
 
@@ -59,53 +62,138 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-                <List>
-                    {messages?.slice().reverse().map((msg) => (
-                        <ListItem
-                            key={msg._id}
-                            sx={{
-                                justifyContent: msg.senderId === userId ? 'flex-end' : 'flex-start',
-                            }}
-                        >
-                            <Paper
+            {/* Header */}
+            <Paper elevation={0} sx={{
+                p: 2,
+                px: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'white'
+            }}>
+                <Box>
+                    <Typography variant="h6" fontWeight="700">Chat Room</Typography>
+                    <Typography variant="caption" color="text.secondary">Active now</Typography>
+                </Box>
+                <IconButton>
+                    <MoreVertIcon />
+                </IconButton>
+            </Paper>
+
+            {/* Messages Area */}
+            <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 4, display: 'flex', flexDirection: 'column', bgcolor: '#f8fafc' }}>
+                <List sx={{ width: '100%' }}>
+                    {messages?.slice().reverse().map((msg, index) => {
+                        const isOwn = msg.senderId === userId;
+                        return (
+                            <ListItem
+                                key={msg._id}
+                                disablePadding
                                 sx={{
-                                    p: 1.5,
-                                    bgcolor: msg.senderId === userId ? 'primary.main' : 'background.paper',
-                                    color: msg.senderId === userId ? 'primary.contrastText' : 'text.primary',
-                                    maxWidth: '70%',
-                                    wordBreak: 'break-word',
+                                    display: 'flex',
+                                    justifyContent: isOwn ? 'flex-end' : 'flex-start',
+                                    mb: 2,
+                                    width: '100%'
                                 }}
                             >
-                                <ListItemText
-                                    primary={msg.content}
-                                    secondary={new Date(msg.createdAt).toLocaleTimeString()}
-                                    secondaryTypographyProps={{
-                                        color: msg.senderId === userId ? 'rgba(255,255,255,0.7)' : 'text.secondary',
-                                        fontSize: '0.75rem'
-                                    }}
-                                />
-                            </Paper>
-                        </ListItem>
-                    ))}
+                                <Stack direction={isOwn ? 'row-reverse' : 'row'} spacing={1.5} alignItems="flex-end" sx={{ maxWidth: '80%' }}>
+                                    {!isOwn && (
+                                        <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.light', fontSize: '0.8rem' }}>
+                                            U{msg.senderId}
+                                        </Avatar>
+                                    )}
+
+                                    <Paper
+                                        elevation={isOwn ? 4 : 1}
+                                        sx={{
+                                            p: 2,
+                                            px: 2.5,
+                                            borderRadius: 2.5,
+                                            borderBottomRightRadius: isOwn ? 4 : 20,
+                                            borderBottomLeftRadius: isOwn ? 20 : 4,
+                                            bgcolor: isOwn ? 'primary.main' : 'white',
+                                            color: isOwn ? 'white' : 'text.primary',
+                                            position: 'relative'
+                                        }}
+                                    >
+                                        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                                            {msg.content}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{
+                                            display: 'block',
+                                            mt: 0.5,
+                                            textAlign: 'right',
+                                            opacity: 0.7,
+                                            fontSize: '0.65rem'
+                                        }}>
+                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </Typography>
+                                    </Paper>
+                                </Stack>
+                            </ListItem>
+                        )
+                    })}
                     <div ref={messagesEndRef} />
                 </List>
             </Box>
-            <Divider />
-            <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
+
+            {/* Input Area */}
+            <Paper elevation={0} sx={{
+                p: 2,
+                px: 4,
+                bgcolor: 'white',
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+            }}>
+                <IconButton size="small" sx={{ color: 'text.secondary' }}>
+                    <AttachFileIcon />
+                </IconButton>
+
                 <TextField
                     fullWidth
-                    variant="outlined"
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    size="small"
+                    variant="outlined"
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            backgroundColor: '#f8fafc',
+                            borderRadius: 50,
+                            pr: 1
+                        }
+                    }}
+                    InputProps={{
+                        endAdornment: (
+                            <IconButton size="small" sx={{ color: 'text.secondary' }}>
+                                <InsertEmoticonIcon />
+                            </IconButton>
+                        )
+                    }}
                 />
-                <IconButton color="primary" onClick={handleSend} disabled={!newMessage.trim()}>
-                    <SendIcon />
+
+                <IconButton
+                    color="primary"
+                    onClick={handleSend}
+                    disabled={!newMessage.trim()}
+                    sx={{
+                        bgcolor: 'primary.main',
+                        color: 'white',
+                        '&:hover': { bgcolor: 'primary.dark' },
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        boxShadow: '0 4px 10px rgba(99, 102, 241, 0.4)'
+                    }}
+                >
+                    <SendIcon fontSize="small" />
                 </IconButton>
-            </Box>
+            </Paper>
         </Box>
     );
 };

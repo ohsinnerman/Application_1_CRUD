@@ -2,6 +2,8 @@
 
 A production-grade, real-time chat application built with the MERN stack (MongoDB, Express, React, Node.js), PostgreSQL, Redis, and Socket.IO.
 
+**Recently Overhauled: Now features a modern, Aesthetic Light Mode UI.**
+
 ## Prerequisites
 
 Before running the application, ensure you have the following installed:
@@ -53,16 +55,12 @@ npm run dev
 
 ## Features
 
-- **Authentication**: JWT-based auth with Register/Login.
-- **Real-time Messaging**: Instant messaging using Socket.IO.
-- **Private Chats**: Create 1-on-1 chats with other users.
-- **Search**: Find users by username.
+- **Aesthetic Light Mode**: A clean, modern UI with indigo/pink gradients, glassmorphism, and soft shadows.
+- **Authentication**: JWT-based auth with beautifully designed Login/Register pages.
+- **Real-time Messaging**: Instant messaging using Socket.IO with "Chat Bubble" interface.
+- **Modern Dashboard**: Clean sidebar navigation with integrated search and user profile.
+- **Role-Based Access**: Secure endpoints protected by RBAC.
 - **Persistence**: Messages are saved in MongoDB, User profiles in PostgreSQL.
-
-## Troubleshooting
-
-- **Database Connection Errors**: Ensure Docker is running and containers are up (`docker ps`).
-- **Build Errors**: Try deleting `node_modules` and running `npm install` again.
 
 ## Deployment
 
@@ -84,10 +82,9 @@ Ideal for production environments like AWS EKS, Google GKE, or Azure AKS.
     ```bash
     kubectl apply -f deploy/k8s/
     ```
-    This creates Deployments and Services for all components.
 
 2.  **Access**:
-    The generic manifests use `LoadBalancer` for the client service. Check your cloud provider's external IP assignment:
+    Check your cloud provider's external IP assignment:
     ```bash
     kubectl get services
     ```

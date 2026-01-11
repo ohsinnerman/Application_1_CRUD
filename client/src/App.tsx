@@ -4,24 +4,22 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import RequireAuth from './components/RequireAuth';
 import ChatDashboard from './pages/ChatDashboard';
+import LandingPage from './pages/LandingPage';
 
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-    },
-});
+import { aestheticTheme } from './theme';
 
 function App() {
     return (
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={aestheticTheme}>
             <CssBaseline />
             <Routes>
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
 
                 {/* Protected Routes */}
                 <Route element={<RequireAuth />}>
-                    <Route path="/" element={<ChatDashboard />} />
+                    <Route path="/channels/@me" element={<ChatDashboard />} />
                 </Route>
             </Routes>
         </ThemeProvider>

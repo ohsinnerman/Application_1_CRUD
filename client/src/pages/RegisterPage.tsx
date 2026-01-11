@@ -1,96 +1,99 @@
 import React, { useState } from 'react';
 import { useRegisterMutation } from '../features/auth/authApi';
-import { setCredentials } from '../features/auth/authSlice';
-import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Box, Button, TextField, Typography, Container, Alert } from '@mui/material';
+import { Box, TextField, Button, Typography, Container, Paper, Alert, Stack } from '@mui/material';
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [credentials, setCredentials] = useState({ username: '', email: '', password: '' });
     const [register, { isLoading, error }] = useRegisterMutation();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const userData = await register({ username, email, password }).unwrap();
-            // After register, we might want to auto-login or redirect to login.
-            // The backend returns user data but not token on register usually unless designed so.
-            // Checking backend... AuthService.register returns user.
-            // So we redirect to login or ask user to login.
+            await register(credentials).unwrap();
             navigate('/login');
         } catch (err) {
-            console.error('Failed to register:', err);
+            console.error('Registration failed', err);
         }
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Sign Up
-                </Typography>
-                {error && (
-                    <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-                        {/* @ts-ignore */}
-                        {error?.data?.message || 'Registration failed'}
-                    </Alert>
-                )}
-                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Username"
-                        autoComplete="username"
-                        autoFocus
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Email Address"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Signing up...' : 'Sign Up'}
-                    </Button>
-                    <Link to="/login" style={{ textDecoration: 'none' }}>
-                        {"Already have an account? Sign In"}
-                    </Link>
-                </Box>
-            </Box>
-        </Container>
+        <Box sx={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: 'background.default',
+        }}>
+            <Container maxWidth="xs">
+                <Paper elevation={8} sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
+                    <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, color: 'primary.main', mb: 1 }}>
+                        Create Account
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                        Join ChatSpace today
+                    </Typography>
+
+                    {error && <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>Registration failed</Alert>}
+
+                    <form onSubmit={handleSubmit}>
+                        <Stack spacing={2.5}>
+                            <TextField
+                                fullWidth
+                                label="Username"
+                                name="username"
+                                required
+                                value={credentials.username}
+                                onChange={handleChange}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Email Address"
+                                name="email"
+                                type="email"
+                                required
+                                value={credentials.email}
+                                onChange={handleChange}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Password"
+                                name="password"
+                                type="password"
+                                required
+                                value={credentials.password}
+                                onChange={handleChange}
+                            />
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                disabled={isLoading}
+                                sx={{ py: 1.5, mt: 1 }}
+                            >
+                                {isLoading ? 'Creating Account...' : 'Sign Up'}
+                            </Button>
+                        </Stack>
+                    </form>
+
+                    <Box sx={{ mt: 3 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Already have an account?{' '}
+                            <Link to="/login" style={{ color: '#6366f1', textDecoration: 'none', fontWeight: 600 }}>
+                                Sign in
+                            </Link>
+                        </Typography>
+                    </Box>
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 
