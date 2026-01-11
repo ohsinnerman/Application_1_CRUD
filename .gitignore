@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+package-lock.json
+# Keep package-lock if you want consistent installs, but often ignored in some workflows. 
+# For this project, let's keep it if generated, but definitely ignore node_modules.
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+/server/dist
+/client/dist
+/client/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
+Problem Statement_ Real-Time Chat Application with Socket.pdf

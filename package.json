@@ -1,0 +1,47 @@
+{
+  "name": "application_1_crud",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ohsinnerman/Application_1_CRUD.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ohsinnerman/Application_1_CRUD/issues"
+  },
+  "homepage": "https://github.com/ohsinnerman/Application_1_CRUD#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.0.6",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.16.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
+    "@reduxjs/toolkit": "^2.11.2",
+    "formik": "^2.4.9",
+    "notistack": "^3.0.2",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.12.0",
+    "socket.io-client": "^4.8.3",
+    "yup": "^1.7.1"
+  }
+}

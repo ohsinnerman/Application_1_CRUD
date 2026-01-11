@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: chat_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: chat_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chat_network
+
+  # MongoDB Service
+  mongo:
+    image: mongo:6-jammy
+    container_name: chat_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: mongopassword
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - chat_network
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: chat_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - chat_network
+
+  # Backend API
+  server:
+    build: ./server
+    container_name: chat_server
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - CLIENT_URL=http://localhost:5173
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespassword
+      - POSTGRES_DB=chat_db
+      - MONGO_URI=mongodb://admin:mongopassword@mongo:27017/chat_db?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=supersecretkey
+    depends_on:
+      - postgres
+      - mongo
+      - redis
+    networks:
+      - chat_network
+
+  # Frontend UI
+  client:
+    build: ./client
+    container_name: chat_client
+    ports:
+      - "5173:5173"
+    networks:
+      - chat_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: chat_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - server
+      - client
+    networks:
+      - chat_network
+
+networks:
+  chat_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
