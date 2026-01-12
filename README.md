@@ -62,29 +62,4 @@ npm run dev
 - **Role-Based Access**: Secure endpoints protected by RBAC.
 - **Persistence**: Messages are saved in MongoDB, User profiles in PostgreSQL.
 
-## Deployment
 
-### Option 1: Docker Compose (Single Server / VPS)
-Ideal for simple deployments on AWS EC2, DigitalOcean, or a local server.
-
-1.  **Build and Start Services**:
-    ```bash
-    docker-compose up -d --build
-    ```
-    This will start Nginx, Server, Client, Postgres, Mongo, and Redis containers.
-    The app will be accessible at `http://localhost` (or your server's IP) on port 80.
-
-### Option 2: Kubernetes (Scalable Cluster)
-Ideal for production environments like AWS EKS, Google GKE, or Azure AKS.
-
-1.  **Apply Manifests**:
-    Ensure you have `kubectl` configured for your cluster.
-    ```bash
-    kubectl apply -f deploy/k8s/
-    ```
-
-2.  **Access**:
-    Check your cloud provider's external IP assignment:
-    ```bash
-    kubectl get services
-    ```
