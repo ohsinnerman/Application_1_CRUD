@@ -11,13 +11,19 @@ import fs from 'fs';
 import path from 'path';
 
 // PostgreSQL Connection
-const pgPool = new Pool({
-    user: process.env.POSTGRES_USER || 'postgres',
-    host: process.env.POSTGRES_HOST || 'localhost',
-    database: process.env.POSTGRES_DB || 'chat_db',
-    password: process.env.POSTGRES_PASSWORD || 'postgrespassword',
-    port: parseInt(process.env.POSTGRES_PORT || '5432'),
-});
+// Support both DATABASE_URL (Render/production) and individual vars (local dev)
+const pgPool = process.env.DATABASE_URL
+    ? new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+    })
+    : new Pool({
+        user: process.env.POSTGRES_USER || 'postgres',
+        host: process.env.POSTGRES_HOST || 'localhost',
+        database: process.env.POSTGRES_DB || 'chat_db',
+        password: process.env.POSTGRES_PASSWORD || 'postgrespassword',
+        port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    });
 
 export const connectPg = async () => {
     try {
